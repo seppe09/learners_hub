@@ -4,12 +4,15 @@
   box-sizing: border-box;
 }
 
+body {
+  background-color: #2c2c2c;
+}
+
 .main-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
 }
 
 /***************/
@@ -60,10 +63,19 @@
 }
 
 /***************/
-/**Auth-Forms**/
+/***Headings***/
 /*************/
+.heading {
+  color: #ffffff;
+  text-align: center;
+  padding: 5px auto;
+}
 
-.auth-form {
+/**************/
+/****Forms****/
+/************/
+
+.form-container {
   background-color: white;
   margin: 10px;
   padding: 2rem;
@@ -88,25 +100,21 @@ legend {
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="date"],
+input[type="file"],
+input[type="number"],
+select,
+textarea {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   width: 100%;
+  resize: vertical;
 }
 
-.role-selection {
-  margin-bottom: 15px;
-}
-
-.auth-heading,
-.dashboard-heading {
-  margin: 10px;
-  padding: 15px;
-  text-align: center;
-}
-
-.auth-form button {
+/* button */
+.form-container button {
   width: 100%;
   padding: 12px;
   margin-top: 20px;
@@ -120,13 +128,13 @@ input[type="password"] {
   transition: all 0.3s ease;
 }
 
-.auth-form button:hover {
+.form-container button:hover {
   background-color: #333;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-1px);
 }
 
-.auth-form button:active {
+.form-container button:active {
   transform: translateY(0);
 }
 

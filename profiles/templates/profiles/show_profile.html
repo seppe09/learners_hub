@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>My Profile</h2>
+
+    <!-- profile image -->
+    {% if profile.profile_image %}
+    <img src="{{ profile.profile_image.url }}" width="120">
+    {% endif %}
+
+    <!-- common info -->
+    <p><strong>Name:</strong> {{ request.user.get_full_name }}</p>
+    <p><strong>Email:</strong> {{ request.user.email }}</p>
+    <p><strong>Bio:</strong> {{ profile.bio }}</p>
+
+    <!-- student fields -->
+    {% if role == "student" %}
+    <p><strong>DOB:</strong> {{ profile.date_of_birth }}</p>
+    <p><strong>Gender:</strong> {{ profile.gender }}</p>
+    <p><strong>Qualification:</strong> {{ profile.get_qualification_display }}</p>
+    <p><strong>Institution:</strong> {{ profile.institution }}</p>
+    <p><strong>Interests:</strong> {{ profile.interests }}</p>
+    <p><strong>Goals:</strong> {{ profile.goals }}</p>
+    {% endif %}
+
+    <!-- teacher fields -->
+    {% if role == "teacher" %}
+    <p><strong>Qualification:</strong> {{ profile.get_qualification_display }}</p>
+    <p><strong>Expertise:</strong> {{ profile.expertise }}</p>
+    <p><strong>Experience:</strong> {{ profile.experience }} years</p>
+    <p><strong>Languages:</strong> {{ profile.languages }}</p>
+    {% endif %}
+
+    <a href="{% url 'dashboard_page' %}">Edit Profile</a>
+
+</div>
+
+{% endblock %}

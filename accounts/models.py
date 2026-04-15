@@ -21,9 +21,10 @@ class Teacher(models.Model):
         ("female", "Female"),
         ("rather not say", "Rather Not Say")
     ]
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to="teacher/profile_images/", blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="teacher_profile")
+    date_of_birth = models.DateField(default=None)
     gender = models.CharField(max_length=15, choices=GENDER, blank=True, null=True)
+    profile_image = models.ImageField(upload_to="teacher/profile_images/", blank=True, null=True)
     bio = models.TextField(blank=True)
     qualification = models.CharField(max_length=10, choices=EDUCATION_LEVEL, default="bachelors")
     expertise = models.CharField(max_length=200)
@@ -44,8 +45,8 @@ class Student(models.Model):
         ("female", "Female"),
         ("rather not say", "Rather Not Say")
     ]
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    date_of_birth = models.DateField()
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student_profile")
+    date_of_birth = models.DateField(default=None)
     gender = models.CharField(max_length=15, choices=GENDER, blank=True, null=True)
     profile_image = models.ImageField(upload_to="student/profile_images/", blank=True, null=True)  
     bio = models.TextField(blank=True)
