@@ -1,60 +1,32 @@
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
+    ROLE_CHOICES = [
+        ("student", "Student"),
+        ("teacher", "Teacher"),
+    ]
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="student")
     email = models.EmailField(unique=True)
-    is_teacher = models.BooleanField(default=False)
-    is_student = models.BooleanField(default=True)
+
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
         return self.username
-    
-class Teacher(models.Model):
-    EDUCATION_LEVEL = [
-        ("bachelors", "Bachelors"),
-        ("masters", "Masters"),
-        ("phd", "PhD"),
-    ]
-    GENDER = [
-        ("male", "Male"),
-        ("female", "Female"),
-        ("rather not say", "Rather Not Say")
-    ]
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="teacher_profile")
-    date_of_birth = models.DateField(default=None)
-    gender = models.CharField(max_length=15, choices=GENDER, blank=True, null=True)
-    profile_image = models.ImageField(upload_to="teacher/profile_images/", blank=True, null=True)
-    bio = models.TextField(blank=True)
-    qualification = models.CharField(max_length=10, choices=EDUCATION_LEVEL, default="bachelors")
-    expertise = models.CharField(max_length=200)
-    experience = models.PositiveIntegerField()
-    languages = models.CharField(max_length=200)
 
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
-    
-class Student(models.Model):
-    EDUCATION_LEVEL = [
-        ("school", "School"),
-        ("college", "College"),
-        ("working", "Working"),
-    ]
-    GENDER = [
-        ("male", "Male"),
-        ("female", "Female"),
-        ("rather not say", "Rather Not Say")
-    ]
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student_profile")
-    date_of_birth = models.DateField(default=None)
-    gender = models.CharField(max_length=15, choices=GENDER, blank=True, null=True)
-    profile_image = models.ImageField(upload_to="student/profile_images/", blank=True, null=True)  
-    bio = models.TextField(blank=True)
-    qualification = models.CharField(max_length=8, choices=EDUCATION_LEVEL, default="school")
-    institution = models.CharField(max_length=200)
-    interests = models.CharField(max_length=200)
-    goals = models.CharField(max_length=100)
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}".strip() or self.username
 
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
-        
+    @property
+    def initials(self):
+        parts = self.full_name.split()
+        if len(parts) >= 2:
+            return f"{parts[0][0]}{parts[-1][0]}".upper()
+        return self.username[:2].upper()
+
+    @property
+    def has_profile(self):
+        return hasattr(self, "student_profile") or hasattr(self, "teacher_profile")

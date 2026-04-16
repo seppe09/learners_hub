@@ -1,37 +1,47 @@
-{% extends "layout.html" %}
-
-{% block title %}Dashboard{% endblock %}
+{% extends 'layout.html' %}
+{% block title %}Create Profile{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset>
-            <h2 class="heading" style="color: black;">Create Your Profile</h2>
-            <label>Profile Image</label>
-            <input type="file" name="profile_image">
+<h1 class="auth-heading">Complete your profile</h1>
+<div class="form-container" style="max-width:540px;">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <fieldset>
 
-            <label>Bio</label>
-            <textarea name="bio"></textarea>
+      <div>
+        <label for="profile_image">Profile Photo</label>
+        <input type="file" name="profile_image" id="profile_image" accept="image/*">
+      </div>
 
-            <label>Date of Birth</label>
-            <input type="date" name="date_of_birth">
+      <div>
+        <label for="bio">Bio</label>
+        <textarea name="bio" id="bio" rows="3" placeholder="Tell others about yourself..."></textarea>
+      </div>
 
-            <label>Gender</label>
-            <select name="gender">
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-            </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+        <div>
+          <label for="date_of_birth">Date of Birth</label>
+          <input type="date" name="date_of_birth" id="date_of_birth">
+        </div>
+        <div>
+          <label for="gender">Gender</label>
+          <select name="gender" id="gender">
+            <option value="">Select</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="rather not say">Rather Not Say</option>
+          </select>
+        </div>
+      </div>
 
-            {% if request.user.is_student %}
-                {% include "profiles/student_form.html" %}
-            {% elif request.user.is_teacher %}
-                {% include "profiles/teacher_form.html" %}
-            {% endif %}
+      {% if request.user.role == 'student' %}
+        {% include "profiles/student_form.html" %}
+      {% elif request.user.role == 'teacher' %}
+        {% include "profiles/teacher_form.html" %}
+      {% endif %}
 
-            <button type="submit">Save</button>
-        </fieldset>
-    </form>
+      <button type="submit">Save Profile →</button>
+    </fieldset>
+  </form>
 </div>
 {% endblock %}

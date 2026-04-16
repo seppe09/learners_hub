@@ -1,62 +1,57 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        {% block title %}{% endblock %}
-    </title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Learner's Hub{% endblock %} — Learner's Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  {% block extra_head %}{% endblock %}
 </head>
-
 <body>
 
-    <nav class="navbar">
-
-        <div class="nav-logo-section">
-            <img src="{% static 'images/logo.png' %}" alt="Logo" class="nav-logo">
-            <span class="nav-brand-name">Learner's Hub</span>
-        </div>
-
-        <ul class="nav-links">
-
-            {% if not user.is_authenticated %}
-            <a href="{% url 'signup_page' %}">Sign Up</a>
-            <a href="{% url 'login_page' %}">Login</a>
-            {% endif %}
-
-            {% if user.is_authenticated %}
-            <a href="{% url 'dashboard_page' %}">Dashboard</a>
-            {% if request.user.student_profile or request.user.teacher_profile %}
-            <a href="{% url 'view_profile_page' %}">Profile</a>
-            {% else %}
-            <a href="{% url 'create_profile_page' %}">Profile</a>
-            {% endif %}
-            <a href="{% url 'logout_page' %}">Logout</a>
-            {% endif %}
-
-        </ul>
-
-    </nav>
-
-    <div class="main-container">
-
-        <div class="messages">
-            {% for message in messages %}
-            <div class="message {{ message.tags }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-
-        {% block content %}{% endblock %}
-
+  <nav class="navbar">
+    <div class="nav-logo-section">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" class="nav-logo">
+      <span class="nav-brand-name">Learner's Hub</span>
     </div>
 
-    <script src="{% static 'js/scripts.js' %}"></script>
+    <ul class="nav-links">
+      {% if not user.is_authenticated %}
+        <li><a href="{% url 'signup_page' %}">Sign Up</a></li>
+        <li><a href="{% url 'login_page' %}">Login</a></li>
+      {% else %}
+        <li><a href="{% url 'dashboard_page' %}" {% if request.resolver_match.url_name == 'dashboard_page' %}class="active"{% endif %}>Dashboard</a></li>
+        {% if user.has_profile %}
+          <li><a href="{% url 'view_profile_page' %}" {% if 'profile' in request.resolver_match.url_name %}class="active"{% endif %}>Profile</a></li>
+        {% else %}
+          <li><a href="{% url 'create_profile_page' %}">Create Profile</a></li>
+        {% endif %}
+        <li><a href="{% url 'logout_page' %}">Logout</a></li>
+      {% endif %}
+    </ul>
+  </nav>
 
+  <div class="main-container">
+
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="message {{ message.tags }}">
+        {% if message.tags == 'success' %}✓{% elif message.tags == 'error' %}⚠{% else %}ℹ{% endif %}
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+  </div>
+
+  <script src="{% static 'js/scripts.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
 </body>
-
 </html>

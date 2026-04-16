@@ -1,7 +1,101 @@
-{% extends "layout.html" %}
-
+{% extends 'layout.html' %}
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="heading">Hello, {{request.user.first_name}} {{request.user.last_name}}</h1>
+<div class="dashboard">
+
+  <div class="welcome-card">
+    <div class="welcome-avatar">
+      {% if user.has_profile %}
+        {% if user.role == 'teacher' and user.teacher_profile.profile_image %}
+          <img src="{{ user.teacher_profile.profile_image.url }}" alt="{{ user.username }}">
+        {% elif user.role == 'student' and user.student_profile.profile_image %}
+          <img src="{{ user.student_profile.profile_image.url }}" alt="{{ user.username }}">
+        {% else %}
+          {{ user.initials }}
+        {% endif %}
+      {% else %}
+        {{ user.initials }}
+      {% endif %}
+    </div>
+
+    <div class="welcome-text">
+      <h1>Hello, {{ user.full_name }} 👋</h1>
+      <span class="role-badge role-{{ user.role }}">
+        {% if user.role == 'teacher' %}📚{% else %}🎓{% endif %}
+        {{ user.get_role_display }}
+      </span>
+    </div>
+
+    <div class="dashboard-actions">
+      {% if user.has_profile %}
+        <a href="{% url 'view_profile_page' %}" class="btn">View Profile</a>
+        <a href="{% url 'edit_profile_page' %}" class="btn btn-accent">Edit Profile</a>
+      {% else %}
+        <a href="{% url 'create_profile_page' %}" class="btn btn-accent">Complete Profile</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon si-purple">📧</div>
+      <div class="stat-value">{{ user.email }}</div>
+      <div class="stat-label">Email</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-green">👤</div>
+      <div class="stat-value">@{{ user.username }}</div>
+      <div class="stat-label">Username</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-yellow">📅</div>
+      <div class="stat-value">{{ user.date_joined|date:"M j, Y" }}</div>
+      <div class="stat-label">Member Since</div>
+    </div>
+    {% if user.has_profile %}
+    <div class="stat-card">
+      <div class="stat-icon si-purple">✅</div>
+      <div class="stat-value" style="color:var(--green);">Complete</div>
+      <div class="stat-label">Profile Status</div>
+    </div>
+    {% else %}
+    <div class="stat-card">
+      <div class="stat-icon si-yellow">⚠</div>
+      <div class="stat-value" style="color:var(--yellow);">Incomplete</div>
+      <div class="stat-label">Profile Status</div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if user.has_profile %}
+  <div class="section-title">Profile Preview</div>
+  <div class="profile-card">
+    <div class="profile-card-body">
+      {% if user.role == 'student' %}
+        <p style="font-size:0.875rem;color:var(--text2);"><strong style="color:var(--text);">Qualification:</strong> {{ user.student_profile.get_qualification_display }}</p>
+        {% if user.student_profile.bio %}
+        <p style="font-size:0.875rem;color:var(--text2);margin-top:0.5rem;font-style:italic;">"{{ user.student_profile.bio }}"</p>
+        {% endif %}
+      {% else %}
+        <p style="font-size:0.875rem;color:var(--text2);"><strong style="color:var(--text);">Expertise:</strong> {{ user.teacher_profile.expertise }}</p>
+        <p style="font-size:0.875rem;color:var(--text2);margin-top:0.4rem;"><strong style="color:var(--text);">Experience:</strong> {{ user.teacher_profile.experience }} years</p>
+        {% if user.teacher_profile.bio %}
+        <p style="font-size:0.875rem;color:var(--text2);margin-top:0.5rem;font-style:italic;">"{{ user.teacher_profile.bio }}"</p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="profile-card">
+    <div class="profile-card-body" style="text-align:center;padding:2rem;">
+      <p style="font-size:1.5rem;margin-bottom:0.75rem;">👤</p>
+      <p style="font-weight:600;margin-bottom:0.4rem;">No profile yet</p>
+      <p style="font-size:0.875rem;color:var(--text2);margin-bottom:1.25rem;">Complete your profile to get the most out of Learner's Hub.</p>
+      <a href="{% url 'create_profile_page' %}" class="btn btn-accent" style="width:auto;">Create Profile →</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
 {% endblock %}
