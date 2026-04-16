@@ -1,0 +1,120 @@
+{% extends 'layout.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="profile-view">
+
+  <div class="profile-card">
+    <div class="profile-header-section">
+      <div class="profile-avatar-lg">
+        {% if profile.profile_image %}
+          <img src="{{ profile.profile_image.url }}" alt="{{ request.user.username }}">
+        {% else %}
+          {{ request.user.initials }}
+        {% endif %}
+      </div>
+      <div>
+        <div class="profile-name">{{ request.user.full_name }}</div>
+        <div class="profile-username">@{{ request.user.username }}</div>
+        <span class="role-badge role-{{ role }}">
+          {% if role == 'teacher' %}📚{% else %}🎓{% endif %}
+          {{ request.user.get_role_display }}
+        </span>
+        {% if profile.bio %}
+        <p class="profile-bio" style="margin-top:0.75rem;">"{{ profile.bio }}"</p>
+        {% endif %}
+      </div>
+      <div style="margin-left:auto;display:flex;gap:0.5rem;align-self:flex-start;">
+        <a href="{% url 'edit_profile_page' %}" class="btn btn-accent">✏️ Edit</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-card-header">Contact & Personal</div>
+    <div class="profile-card-body">
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Email</div>
+          <div class="info-value">{{ request.user.email }}</div>
+        </div>
+        {% if profile.date_of_birth %}
+        <div class="info-item">
+          <div class="info-label">Date of Birth</div>
+          <div class="info-value">{{ profile.date_of_birth }}</div>
+        </div>
+        {% endif %}
+        {% if profile.gender %}
+        <div class="info-item">
+          <div class="info-label">Gender</div>
+          <div class="info-value">{{ profile.get_gender_display }}</div>
+        </div>
+        {% endif %}
+        <div class="info-item">
+          <div class="info-label">Member Since</div>
+          <div class="info-value">{{ request.user.date_joined|date:"M j, Y" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if role == 'student' %}
+  <div class="profile-card">
+    <div class="profile-card-header">Academic Info</div>
+    <div class="profile-card-body">
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Qualification</div>
+          <div class="info-value">{{ profile.get_qualification_display }}</div>
+        </div>
+        {% if profile.institution %}
+        <div class="info-item">
+          <div class="info-label">Institution</div>
+          <div class="info-value">{{ profile.institution }}</div>
+        </div>
+        {% endif %}
+        {% if profile.interests %}
+        <div class="info-item">
+          <div class="info-label">Interests</div>
+          <div class="info-value">{{ profile.interests }}</div>
+        </div>
+        {% endif %}
+        {% if profile.goals %}
+        <div class="info-item">
+          <div class="info-label">Goals</div>
+          <div class="info-value">{{ profile.goals }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if role == 'teacher' %}
+  <div class="profile-card">
+    <div class="profile-card-header">Professional Info</div>
+    <div class="profile-card-body">
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Qualification</div>
+          <div class="info-value">{{ profile.get_qualification_display }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Expertise</div>
+          <div class="info-value">{{ profile.expertise }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Experience</div>
+          <div class="info-value">{{ profile.experience }} years</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Languages</div>
+          <div class="info-value">{{ profile.languages }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

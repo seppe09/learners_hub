@@ -1,0 +1,171 @@
+{% extends 'layout.html' %}
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="edit-profile-wrap">
+
+  <div style="margin-bottom:1.25rem;">
+    <a href="{% url 'view_profile_page' %}" class="back-link">← Back to Profile</a>
+    <h1 class="page-heading" style="margin-top:0.6rem;">Edit Profile</h1>
+    <p class="page-sub">Update your personal information and account settings</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <!-- Photo -->
+    <div class="edit-section">
+      <div class="edit-section-header">📷 Profile Photo</div>
+      <div class="avatar-upload">
+        <div class="current-avatar" id="avatar-display">
+          {% if profile.profile_image %}
+            <img src="{{ profile.profile_image.url }}" alt="{{ request.user.username }}">
+          {% else %}
+            {{ request.user.initials }}
+          {% endif %}
+        </div>
+        <div class="avatar-info">
+          <h3>{{ request.user.full_name }}</h3>
+          <p>JPG, PNG or GIF — max 5 MB</p>
+          <div class="file-btn-wrap">
+            <input type="file" name="profile_image" id="profile_image" accept="image/*">
+            <span class="file-btn">📷 Choose Photo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Info -->
+    <div class="edit-section">
+      <div class="edit-section-header">👤 Account Info</div>
+      <div class="edit-section-body">
+        <div class="field-row">
+          <div class="field-group">
+            <label for="first_name">First Name</label>
+            <input type="text" name="first_name" id="first_name"
+              value="{{ request.user.first_name }}" placeholder="Jane">
+          </div>
+          <div class="field-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" name="last_name" id="last_name"
+              value="{{ request.user.last_name }}" placeholder="Doe">
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email"
+            value="{{ request.user.email }}" placeholder="jane@example.com">
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="edit-section">
+      <div class="edit-section-header">📋 Profile Info</div>
+      <div class="edit-section-body">
+        <div class="field-group">
+          <label for="bio">Bio</label>
+          <textarea name="bio" id="bio" rows="3"
+            placeholder="Tell others about yourself...">{{ profile.bio }}</textarea>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="date_of_birth">Date of Birth</label>
+            <input type="date" name="date_of_birth" id="date_of_birth"
+              value="{{ profile.date_of_birth|date:'Y-m-d'|default:'' }}">
+          </div>
+          <div class="field-group">
+            <label for="gender">Gender</label>
+            <select name="gender" id="gender">
+              <option value="">Select</option>
+              <option value="male" {% if profile.gender == 'male' %}selected{% endif %}>Male</option>
+              <option value="female" {% if profile.gender == 'female' %}selected{% endif %}>Female</option>
+              <option value="rather not say" {% if profile.gender == 'rather not say' %}selected{% endif %}>Rather Not Say</option>
+            </select>
+          </div>
+        </div>
+
+        {% if role == 'student' %}
+        <div class="field-group">
+          <label for="qualification">Qualification</label>
+          <select name="qualification" id="qualification">
+            <option value="school" {% if profile.qualification == 'school' %}selected{% endif %}>School</option>
+            <option value="college" {% if profile.qualification == 'college' %}selected{% endif %}>College</option>
+            <option value="working" {% if profile.qualification == 'working' %}selected{% endif %}>Working</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="institution">Institution</label>
+          <input type="text" name="institution" id="institution"
+            value="{{ profile.institution }}" placeholder="School or university name">
+        </div>
+        <div class="field-group">
+          <label for="interests">Interests</label>
+          <input type="text" name="interests" id="interests"
+            value="{{ profile.interests }}" placeholder="e.g. Math, Science, Art">
+        </div>
+        <div class="field-group">
+          <label for="goals">Goals</label>
+          <input type="text" name="goals" id="goals"
+            value="{{ profile.goals }}" placeholder="What do you want to achieve?">
+        </div>
+        {% endif %}
+
+        {% if role == 'teacher' %}
+        <div class="field-group">
+          <label for="qualification">Qualification</label>
+          <select name="qualification" id="qualification">
+            <option value="bachelors" {% if profile.qualification == 'bachelors' %}selected{% endif %}>Bachelors</option>
+            <option value="masters" {% if profile.qualification == 'masters' %}selected{% endif %}>Masters</option>
+            <option value="phd" {% if profile.qualification == 'phd' %}selected{% endif %}>PhD</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="expertise">Expertise</label>
+          <input type="text" name="expertise" id="expertise"
+            value="{{ profile.expertise }}" placeholder="e.g. Mathematics, Physics">
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="experience">Experience (years)</label>
+            <input type="number" name="experience" id="experience"
+              value="{{ profile.experience }}" placeholder="5" min="0">
+          </div>
+          <div class="field-group">
+            <label for="languages">Languages</label>
+            <input type="text" name="languages" id="languages"
+              value="{{ profile.languages }}" placeholder="e.g. English, Hindi">
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Change Password -->
+    <div class="edit-section">
+      <div class="edit-section-header">🔒 Change Password</div>
+      <div class="edit-section-body">
+        <div class="security-note">ℹ️ Leave blank if you don't want to change your password.</div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="new_password">New Password</label>
+            <input type="password" name="new_password" id="new_password"
+              placeholder="Min 8 characters" autocomplete="new-password">
+          </div>
+          <div class="field-group">
+            <label for="confirm_password">Confirm New Password</label>
+            <input type="password" name="confirm_password" id="confirm_password"
+              placeholder="Repeat new password" autocomplete="new-password">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <a href="{% url 'view_profile_page' %}" class="back-link">← Discard changes</a>
+      <button type="submit" class="btn btn-accent" style="width:auto;padding:0.7rem 2rem;">Save Changes ✓</button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
